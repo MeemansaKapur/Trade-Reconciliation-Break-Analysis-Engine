@@ -1,0 +1,1 @@
+record_id,side,status_base,rule_id_base,record_amount_base,currency_base,counterpart_base,status_cand,rule_id_cand,record_amount_cand,currency_cand,counterpart_cand,bucket,scenario,true_status,cand_correct,base_correct

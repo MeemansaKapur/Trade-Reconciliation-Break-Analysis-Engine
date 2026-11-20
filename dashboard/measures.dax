@@ -1,0 +1,46 @@
+// ---- Daily status (fact_daily) --------------------------------------------
+Auto Match Rate =
+    AVERAGE ( fact_daily[auto_match_rate] )
+
+Records Reconciled =
+    SUM ( fact_daily[records_in] )
+
+Controls Status =
+    IF ( MIN ( fact_daily[controls_passed] ) = TRUE (), "PASS", "FAIL" )
+
+// ---- Break register (fact_break) ------------------------------------------
+Open Breaks =
+    CALCULATE ( COUNTROWS ( fact_break ), fact_break[status] <> "RESOLVED" )
+
+Open Break Exposure (INR) =
+    CALCULATE ( SUM ( fact_break[exposure_inr] ), fact_break[status] <> "RESOLVED" )
+
+Escalated Breaks =
+    CALCULATE ( COUNTROWS ( fact_break ), fact_break[escalated] = TRUE () )
+
+Average Age Open (bd) =
+    CALCULATE ( AVERAGE ( fact_break[age_days] ), fact_break[status] <> "RESOLVED" )
+
+Resolved by Engine % =
+    DIVIDE (
+        CALCULATE ( COUNTROWS ( fact_break ), fact_break[approved_by] = "ENGINE" ),
+        CALCULATE ( COUNTROWS ( fact_break ), fact_break[status] = "RESOLVED" )
+    )
+
+Median Days to Resolve =
+    CALCULATE ( MEDIAN ( fact_break[age_days] ), fact_break[status] = "RESOLVED" )
+
+// ---- Trend (fact_open_break_daily) -----------------------------------------
+Open Breaks (snapshot) =
+    COUNTROWS ( fact_open_break_daily )
+
+Open Breaks vs Previous Day =
+    VAR d = MAX ( dim_date[date] )
+    VAR prev = CALCULATE ( MAX ( dim_date[date] ), dim_date[date] < d, ALL ( dim_date ) )
+    RETURN [Open Breaks (snapshot)]
+         - CALCULATE ( [Open Breaks (snapshot)], dim_date[date] = prev, ALL ( dim_date ) )
+
+// ---- Quality (fact_quality) ------------------------------------------------
+Pairing Precision = AVERAGE ( fact_quality[pairing_precision] )
+Pairing Recall    = AVERAGE ( fact_quality[pairing_recall] )
+False Tolerance Rate = AVERAGE ( fact_quality[false_tolerance_rate] )

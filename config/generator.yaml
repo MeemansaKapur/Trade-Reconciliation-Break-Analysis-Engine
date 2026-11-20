@@ -1,0 +1,36 @@
+# Synthetic data generator settings.
+# All data produced by this project is SYNTHETIC. No real trades, clients or counterparties.
+
+reference_seed: 7            # fixes the securities master / counterparty list across runs
+n_securities: {INR: 120, USD: 50, EUR: 30}
+zipf_exponent: 0.8           # popular securities trade more often (creates realistic key collisions)
+n_accounts: 20
+ext_ref_populated_rate: 0.70 # share of internal rows that carry the custodian reference
+
+# Break injection rates (share of internal trades). Mutually exclusive per trade.
+rates:
+  missing_external: 0.010    # trade booked, custodian never confirmed it
+  missing_internal: 0.005    # custodian shows a trade we never booked
+  amount_mismatch:  0.010    # external amount off by 0.1% - 2%
+  fee_mismatch:     0.004    # small absolute fee/commission difference (hard case)
+  rounding_noise:   0.030    # tiny difference that SHOULD be TOLERATED
+  qty_mismatch:     0.005    # external quantity differs
+  timing:           0.010    # external settle date +1 or +2 business days
+  fx_rounding:      0.005    # non-INR trade converted at a slightly different rate
+  duplicate:        0.003    # internal trade booked twice
+  partial_fill:     0.010    # one internal trade = 2-4 external fills
+
+timing_shift_probs: {1: 0.7, 2: 0.3}
+partial_fill_noise_share: 0.15     # partial fills where one leg also carries rounding noise
+
+# Multi-day only: when does a missing record turn up? (lag in business days; null = never)
+late_arrival_lag_probs: {1: 0.40, 2: 0.25, 3: 0.15, null: 0.20}
+
+# Settlement cycles (business days after trade date)
+settlement_cycle: {INR: 1, USD: 1, EUR: 2}
+
+# Exchange holidays (weekends are always skipped). Extend with the exchange calendar in use.
+holidays: ["2026-12-25", "2027-01-01"]
+
+# Static, illustrative reporting rates used ONLY to show break value in INR on the dashboard.
+reporting_fx_to_inr: {INR: 1.0, USD: 84.0, EUR: 91.0}

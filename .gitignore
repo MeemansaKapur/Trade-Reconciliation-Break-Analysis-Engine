@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+.pytest_cache/
+data/raw/
+data/output/
+data/cache/
+*.pyc
+.DS_Store
+dashboard/data/fact_open_break_daily.csv
+RESUME_AND_INTERVIEW.md

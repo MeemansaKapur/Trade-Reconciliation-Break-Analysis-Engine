@@ -1,0 +1,59 @@
+# Break taxonomy: the knowledge base used by controllers and by the explainer (recon/explain.py).
+# priority = order in which the classifier tests the condition (lower = earlier).
+AMOUNT_MISMATCH:
+  priority: 7
+  severity: HIGH
+  owner: Trade support / middle office
+  condition: Paired on reference or economics; quantity and settle date agree; amount difference above tolerance.
+  likely_causes:
+    FEE_OR_COMMISSION: small absolute difference (a few rupees/dollars) on an otherwise identical trade
+    PRICE_OR_BOOKING_ERROR: difference of roughly 0.1% or more - wrong price or gross/net confusion
+  action: Compare booked price and fees with the broker confirmation; amend the booking or raise a claim.
+QTY_MISMATCH:
+  priority: 4
+  severity: HIGH
+  owner: Trade support
+  condition: Paired (or near-matched) records disagree on quantity.
+  likely_causes:
+    PARTIAL_EXECUTION_OR_BOOKING_ERROR: booked full order quantity but only part executed, or a keying error
+  action: Check execution report; amend booked quantity or chase the missing fill.
+TIMING:
+  priority: 5
+  severity: MEDIUM
+  owner: Settlements
+  condition: Same trade economics but the settle (value) date differs.
+  likely_causes:
+    SETTLEMENT_DATE_DIFFERENCE: settlement-cycle assumption differs (T+1 vs T+2) or a holiday calendar mismatch
+  action: Confirm the settlement cycle with the custodian and amend the value date on the wrong side.
+FX_ROUNDING:
+  priority: 6
+  severity: LOW
+  owner: Product control
+  condition: Non-base-currency trade; amount difference within the FX band (1.5-5 bp).
+  likely_causes:
+    FX_CONVERSION: custodian converted at a slightly different rate or rounding convention
+  action: Confirm the FX rate source; if within policy, propose a write-off for checker approval.
+MISSING_EXTERNAL:
+  priority: 2
+  severity: HIGH
+  owner: Settlements
+  condition: Internal booking with no custodian record and no near-match.
+  likely_causes:
+    UNCONFIRMED_TRADE: custodian has not yet confirmed or the trade failed to settle
+  action: Chase the custodian / broker for confirmation; most arrive within 1-3 business days.
+MISSING_INTERNAL:
+  priority: 3
+  severity: HIGH
+  owner: Trade support
+  condition: Custodian record with no internal booking and no near-match.
+  likely_causes:
+    UNBOOKED_TRADE: trade executed but not booked, or booked to the wrong account
+  action: Search for the booking under other accounts; book the trade if genuine.
+DUPLICATE:
+  priority: 1
+  severity: HIGH
+  owner: Trade support
+  condition: Internal row identical to an earlier internal row except for its ID.
+  likely_causes:
+    DUPLICATE_BOOKING: the same trade was booked twice
+  action: Cancel the later booking after confirming only one execution took place.

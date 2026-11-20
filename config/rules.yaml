@@ -1,0 +1,47 @@
+# Matching rules and tolerances, versioned together.
+# Every match / break row stores rule_id + rule_version, so any decision can be traced to the
+# exact configuration that produced it. A version may `inherit` another and override keys.
+# No version ships without a parity report against the current one (see recon/parity.py).
+
+current: v1.3
+
+versions:
+  v1.0:
+    description: Baseline. Pass 1 reference match, Pass 2 economic match (+/-1 bd), Pass 3 whole-group partial fills.
+    passes:
+      P1_REF:   {enabled: true}
+      P2_ECON:  {enabled: true, settle_window_bd: 1, max_candidate_diff_pct: 0.05, max_rounds: 10}
+      P3_GROUP: {enabled: true, max_legs: 6, subset_search: false, max_candidates: 12}
+    tolerances:
+      base_currency: INR
+      matched_abs: 0.01                         # <= 1 paisa / cent -> MATCHED
+      tolerated_abs: {INR: 1.00, USD: 0.05, EUR: 0.05}
+      tolerated_pct: 0.0001                     # or 1 bp of amount, whichever is larger
+      tolerated_pct_cap: null                   # optional cap on the relative leg (in trade ccy)
+      fx_band_pct: 0.0005                       # non-base-ccy diffs within 5 bp -> FX_ROUNDING
+      fx_band_min_pct: 0.0                      # ...and at least this large
+    classification:
+      diag_settle_window_bd: 5                  # near-match search window for unpaired records
+    escalation_age_bd: 5
+
+  v1.1:
+    inherits: v1.0
+    description: Widen Pass 2 settle-date window from +/-1 to +/-2 business days so 2-day timing breaks pair up.
+    passes:
+      P2_ECON: {settle_window_bd: 2}
+
+  v1.2:
+    inherits: v1.1
+    description: Pass 3 bounded subset search (<= 6 legs, <= 12 candidates) for partial fills whose key group is polluted by other fills.
+    passes:
+      P3_GROUP: {subset_search: true}
+
+  v1.3:
+    inherits: v1.2
+    description: >-
+      Fee handling. Cap the relative (1 bp) tolerance at 2.00 INR / 0.10 USD,EUR so fee differences on large
+      trades are no longer auto-tolerated, and require FX_ROUNDING diffs to be >= 1.5 bp so small fee
+      differences on non-INR trades are not mislabelled as FX.
+    tolerances:
+      tolerated_pct_cap: {INR: 2.00, USD: 0.10, EUR: 0.10}
+      fx_band_min_pct: 0.00015

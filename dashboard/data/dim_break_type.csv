@@ -1,0 +1,8 @@
+break_type,priority,severity,owner,condition,action
+AMOUNT_MISMATCH,7,HIGH,Trade support / middle office,Paired on reference or economics; quantity and settle date agree; amount difference above tolerance.,Compare booked price and fees with the broker confirmation; amend the booking or raise a claim.
+QTY_MISMATCH,4,HIGH,Trade support,Paired (or near-matched) records disagree on quantity.,Check execution report; amend booked quantity or chase the missing fill.
+TIMING,5,MEDIUM,Settlements,Same trade economics but the settle (value) date differs.,Confirm the settlement cycle with the custodian and amend the value date on the wrong side.
+FX_ROUNDING,6,LOW,Product control,Non-base-currency trade; amount difference within the FX band (1.5-5 bp).,"Confirm the FX rate source; if within policy, propose a write-off for checker approval."
+MISSING_EXTERNAL,2,HIGH,Settlements,Internal booking with no custodian record and no near-match.,Chase the custodian / broker for confirmation; most arrive within 1-3 business days.
+MISSING_INTERNAL,3,HIGH,Trade support,Custodian record with no internal booking and no near-match.,Search for the booking under other accounts; book the trade if genuine.
+DUPLICATE,1,HIGH,Trade support,Internal row identical to an earlier internal row except for its ID.,Cancel the later booking after confirming only one execution took place.

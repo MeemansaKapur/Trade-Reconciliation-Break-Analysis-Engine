@@ -1,0 +1,15 @@
+# Static data: internal counterparty code -> code used on the custodian statement.
+# Real vendor files use their own identifiers; normalisation maps them back.
+# All codes are fictitious.
+CP01: ALPHINBBXXX
+CP02: BRAVINBBXXX
+CP03: CHARINBBXXX
+CP04: DELTUS33XXX
+CP05: ECHOGB2LXXX
+CP06: FOXTDEFFXXX
+CP07: GOLFINBBXXX
+CP08: HOTLUS33XXX
+CP09: INDIINBBXXX
+CP10: JULISGSGXXX
+CP11: KILOINBBXXX
+CP12: LIMAFRPPXXX
