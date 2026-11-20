@@ -94,5 +94,5 @@ Optional LLM explanations: set `ANTHROPIC_API_KEY` or `OPENAI_API_KEY` (model vi
 
 ## Known limitations
 - Small fee differences on USD/EUR trades can look like FX rounding (≈3.5% of amount breaks). Needs a separate fee field from the custodian.
-- About 5 wrong links per 50K trades from coincidental economic matches. Quality falls at 1M trades in a 200-security universe (precision 99.72%), because keys become crowded. The next step would be to add execution time or order ID to the Pass 2 key.
+- 5.2 wrong links per 50K trades on average (2–9 across seeds) from coincidental economic matches. Quality falls at 1M trades in a 200-security universe (precision 99.72%), because keys become crowded. Next step: add execution time or order ID to the Pass 2 key.
 - Controller pick-up and resolution behaviour in the multi-day run is simulated. Engine matching, carry-forward, ageing and maker-checker enforcement are real.
